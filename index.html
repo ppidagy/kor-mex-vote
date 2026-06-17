@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇰🇷 대한민국 vs 멕시코 🇲🇽 스코어 맞추기</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;padding:20px 0 40px}
+.container{max-width:560px;margin:0 auto;padding:0 16px}
+.page{display:none}.page.active{display:block}
+.card{background:#fff;border:1px solid #e8e6df;border-radius:14px;padding:20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.match-header{text-align:center;padding:20px;background:#fff;border-radius:14px;margin-bottom:16px;border:1px solid #e8e6df;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.match-title{font-size:13px;color:#888;margin-bottom:10px;font-weight:500}
+.match-teams{display:flex;align-items:center;justify-content:center;gap:16px;font-size:20px;font-weight:600}
+.flag{font-size:28px}.vs{font-size:12px;color:#aaa;padding:0 4px}
+.deadline-badge{display:inline-block;margin-top:8px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.deadline-open{background:#e8f5e9;color:#2e7d32}
+.deadline-closed{background:#fce4ec;color:#c62828}
+.section-label{font-size:13px;font-weight:600;color:#666;margin-bottom:8px}
+.score-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.score-btn{width:46px;height:46px;border:1px solid #ddd;border-radius:10px;background:#fff;font-size:16px;font-weight:600;cursor:pointer;color:#333;transition:all 0.15s}
+.score-btn:hover{background:#f5f5f0;border-color:#bbb}
+.score-btn.sel-kor{background:#C60C30;color:#fff;border-color:#C60C30;box-shadow:0 2px 6px rgba(198,12,48,0.3)}
+.score-btn.sel-mex{background:#006847;color:#fff;border-color:#006847;box-shadow:0 2px 6px rgba(0,104,71,0.3)}
+.score-btn:disabled{opacity:0.4;cursor:not-allowed}
+.name-input,input[type=password]{width:100%;padding:11px 14px;border:1px solid #ddd;border-radius:10px;font-size:14px;background:#fff;color:#1a1a1a;margin-bottom:10px;font-family:inherit}
+.name-input:focus,input[type=password]:focus{outline:none;border-color:#C60C30;box-shadow:0 0 0 3px rgba(198,12,48,0.1)}
+.name-input:disabled{background:#f5f5f0;color:#aaa}
+.submit-btn{width:100%;padding:13px;background:#C60C30;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.submit-btn:hover{background:#a00a28}
+.submit-btn:disabled{background:#ccc;cursor:not-allowed}
+.sel-display{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:#f9f9f7;border:1px solid #e8e6df;margin-bottom:10px;font-size:13px;flex-wrap:wrap}
+.badge-kor{background:#C60C30;color:#fff;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:600}
+.badge-mex{background:#006847;color:#fff;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:600}
+.err{color:#C60C30;font-size:13px;margin-bottom:8px;min-height:18px}
+.preview-title{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.combo-row{margin-bottom:12px}
+.combo-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.combo-score{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.combo-pct{font-size:13px;font-weight:500;color:#888}
+.bar-bg{background:#f0ede6;border-radius:20px;height:8px;overflow:hidden;margin-bottom:5px}
+.bar-fill{height:8px;border-radius:20px;background:linear-gradient(90deg,#C60C30 0%,#006847 100%);transition:width 0.5s ease}
+.combo-names{display:flex;flex-wrap:wrap;gap:4px}
+.voter-chip{background:#f5f3ee;border:1px solid #e8e6df;border-radius:20px;padding:2px 9px;font-size:11px;color:#666}
+.rank1{background:#FFF3CD;border:1px solid #ffd966;border-radius:6px;padding:2px 8px;font-size:11px;color:#7a5c00;font-weight:600}
+.empty-preview{font-size:13px;color:#aaa;text-align:center;padding:2rem 0}
+.nav-area{display:flex;justify-content:flex-end;margin-top:12px}
+.nav-btn{padding:8px 16px;border:1px solid #ddd;border-radius:10px;font-size:13px;cursor:pointer;background:#fff;color:#555;font-family:inherit}
+.nav-btn:hover{background:#f5f5f0}
+.closed-banner{background:#fce4ec;border:1px solid #f48fb1;border-radius:12px;padding:16px 20px;text-align:center;margin-bottom:16px}
+.closed-banner h3{color:#c62828;font-size:16px;margin-bottom:6px}
+.closed-banner p{color:#b71c1c;font-size:13px}
+.pw-wrap{max-width:300px;margin:3rem auto;text-align:center}
+.pw-wrap input{text-align:center;letter-spacing:4px;font-size:16px;margin-bottom:10px}
+.pw-btn{width:100%;padding:11px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.pw-btn:hover{background:#1470c0}
+.pw-err{color:#C60C30;font-size:13px;margin-top:8px}
+.tab-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:7px 18px;border:1px solid #e8e6df;border-radius:20px;font-size:13px;cursor:pointer;background:#fff;color:#555;font-weight:500}
+.tab.active{background:#185FA5;color:#fff;border-color:#185FA5}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th{background:#f9f9f7;padding:9px 12px;text-align:left;font-weight:600;border-bottom:1px solid #e8e6df;color:#555}
+.admin-table td{padding:9px 12px;border-bottom:1px solid #f0ede6;color:#1a1a1a;vertical-align:middle}
+.admin-table tr:last-child td{border-bottom:none}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.summary-card{background:#f9f9f7;border:1px solid #e8e6df;border-radius:12px;padding:12px 16px;text-align:center}
+.summary-num{font-size:24px;font-weight:700}
+.summary-lbl{font-size:12px;color:#888;margin-top:3px}
+.reset-btn{padding:8px 16px;background:#fff0f0;border:1px solid #f5c1c1;border-radius:10px;font-size:13px;cursor:pointer;color:#a32d2d;font-family:inherit}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.loading{text-align:center;padding:3rem;color:#aaa;font-size:14px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="page-vote" class="page active"></div>
+  <div id="page-admin" class="page"></div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+/* =====================================================
+   ★ 설정값 — 마감시간 변경 시 DEADLINE만 수정하세요
+   ===================================================== */
+const DEADLINE = new Date('2026-06-20T09:50:00'); // 6월 20일 금요일 오전 9시 50분
+const ADMIN_PW = '20260620';
+
+/* Firebase 설정 */
+const firebaseConfig = {
+  apiKey: "AIzaSyDGE7r6TZrkod_bi4TSUZ79poZQ2wXmulI",
+  authDomain: "kor-vs-mex.firebaseapp.com",
+  databaseURL: "https://kor-vs-mex-default-rtdb.firebaseio.com",
+  projectId: "kor-vs-mex",
+  storageBucket: "kor-vs-mex.firebasestorage.app",
+  messagingSenderId: "492230688591",
+  appId: "1:492230688591:web:4e02741f0ef13c2dae8f3a"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const votesRef = db.ref('votes');
+
+let votes = {};
+let selKor = null, selMex = null;
+let adminUnlocked = false;
+let adminTab = 'list';
+
+function isClosed(){
+  return new Date() >= DEADLINE;
+}
+
+function deadlineText(){
+  const y=DEADLINE.getFullYear();
+  const mo=DEADLINE.getMonth()+1;
+  const d=DEADLINE.getDate();
+  const h=String(DEADLINE.getHours()).padStart(2,'0');
+  const mi=String(DEADLINE.getMinutes()).padStart(2,'0');
+  return `${mo}월 ${d}일 ${h}:${mi} 마감`;
+}
+
+/* Firebase 실시간 리스닝 */
+function startListen(){
+  document.getElementById('page-vote').innerHTML = '<div class="loading">데이터 불러오는 중...</div>';
+  votesRef.on('value', snap => {
+    votes = snap.val() || {};
+    if(document.getElementById('page-vote').classList.contains('active')) renderVote();
+    if(document.getElementById('page-admin').classList.contains('active') && adminUnlocked) renderAdminContent();
+  });
+}
+
+function buildComboMap(){
+  const map={};
+  Object.values(votes).forEach(v=>{
+    const k=`${v.kor}:${v.mex}`;
+    if(!map[k]) map[k]={kor:v.kor,mex:v.mex,count:0,names:[]};
+    map[k].count++;
+    map[k].names.push(v.name);
+  });
+  return Object.values(map).sort((a,b)=> a.kor!==b.kor ? a.kor-b.kor : a.mex-b.mex);
+}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(p==='admin') renderAdmin();
+  if(p==='vote') renderVote();
+}
+
+/* ── 투표 화면 ── */
+function renderVote(){
+  const el = document.getElementById('page-vote');
+  const total = Object.keys(votes).length;
+  const combos = buildComboMap();
+  const closed = isClosed();
+
+  let html = `
+  <div class="match-header">
+    <div class="match-title">2026 FIFA 월드컵 — 스코어 맞추기</div>
+    <div class="match-teams">
+      <span class="flag">🇰🇷</span><span>대한민국</span>
+      <span class="vs">VS</span>
+      <span>멕시코</span><span class="flag">🇲🇽</span>
+    </div>
+    <div>
+      <span class="deadline-badge ${closed?'deadline-closed':'deadline-open'}">
+        ${closed ? '⏰ 투표 마감' : '✅ 투표 진행중'} · ${deadlineText()}
+      </span>
+    </div>
+    <div style="font-size:12px;color:#aaa;margin-top:6px">참여자 ${total}명</div>
+  </div>`;
+
+  if(closed){
+    html += `<div class="closed-banner">
+      <h3>⏰ 투표가 마감되었습니다</h3>
+      <p>더 이상 스코어를 입력할 수 없습니다.<br>아래에서 예측 현황을 확인하세요.</p>
+    </div>`;
+  } else {
+    html += `<div class="card">
+      <div class="section-label">이름 입력</div>
+      <input class="name-input" id="inp-name" placeholder="홍길동" maxlength="10">
+      <div class="section-label" style="margin-top:14px">🇰🇷 대한민국 득점</div>
+      <div class="score-grid">${makeScoreBtns('kor')}</div>
+      <div class="section-label" style="margin-top:14px">🇲🇽 멕시코 득점</div>
+      <div class="score-grid">${makeScoreBtns('mex')}</div>
+      <div id="sel-display" style="margin-top:14px"></div>
+      <div id="vote-err" class="err"></div>
+      <button class="submit-btn" onclick="castVote()">✅ 스코어 제출</button>
+      <div class="nav-area">
+        <button class="nav-btn" onclick="showPage('admin')"><i class="ti ti-lock"></i> 관리자</button>
+      </div>
+    </div>`;
+  }
+
+  html += `<div class="card">
+    <div class="preview-title"><i class="ti ti-chart-bar" style="font-size:17px;color:#C60C30"></i> 스코어 예측 현황</div>`;
+
+  if(!combos.length){
+    html += `<div class="empty-preview">아직 투표한 사람이 없습니다</div>`;
+  } else {
+    combos.forEach(c=>{
+      const pct = Math.round(c.count/total*100);
+      const isTop = c.count===combos[0].count;
+      html += `<div class="combo-row">
+        <div class="combo-header">
+          <div class="combo-score">
+            <span class="badge-kor">🇰🇷 ${c.kor}</span>
+            <span style="color:#bbb;font-size:14px">:</span>
+            <span class="badge-mex">🇲🇽 ${c.mex}</span>
+            ${isTop?`<span class="rank1">🏆 1위</span>`:''}
+          </div>
+          <span class="combo-pct">${pct}% · ${c.count}명</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <div class="combo-names">${c.names.map(n=>`<span class="voter-chip">${escHtml(n)}</span>`).join('')}</div>
+      </div>`;
+    });
+  }
+
+  if(!closed){
+    html += `</div>`;
+  } else {
+    html += `<div style="margin-top:12px;text-align:right">
+      <button class="nav-btn" onclick="showPage('admin')"><i class="ti ti-lock"></i> 관리자</button>
+    </div></div>`;
+  }
+
+  el.innerHTML = html;
+  if(!closed){ restoreSelButtons(); updateSelDisplay(); }
+}
+
+function makeScoreBtns(team){
+  let s='';
+  for(let i=0;i<=10;i++){
+    s+=`<button class="score-btn" id="sb-${team}-${i}" onclick="selectScore('${team}',${i})">${i}</button>`;
+  }
+  return s;
+}
+function restoreSelButtons(){
+  if(selKor!==null) document.getElementById('sb-kor-'+selKor)?.classList.add('sel-kor');
+  if(selMex!==null) document.getElementById('sb-mex-'+selMex)?.classList.add('sel-mex');
+}
+function selectScore(team,val){
+  if(team==='kor') selKor=val; else selMex=val;
+  document.querySelectorAll('.score-btn').forEach(b=>{
+    if(b.id.startsWith('sb-kor')) b.classList.remove('sel-kor');
+    if(b.id.startsWith('sb-mex')) b.classList.remove('sel-mex');
+  });
+  if(selKor!==null) document.getElementById('sb-kor-'+selKor)?.classList.add('sel-kor');
+  if(selMex!==null) document.getElementById('sb-mex-'+selMex)?.classList.add('sel-mex');
+  updateSelDisplay();
+}
+function updateSelDisplay(){
+  const el=document.getElementById('sel-display');
+  if(!el) return;
+  if(selKor===null&&selMex===null){el.innerHTML='';return;}
+  let html=`<div class="sel-display">내 예측: `;
+  if(selKor!==null) html+=`<span class="badge-kor">🇰🇷 ${selKor}</span>`;
+  if(selKor!==null&&selMex!==null) html+=`<span style="color:#bbb;font-size:16px">:</span>`;
+  if(selMex!==null) html+=`<span class="badge-mex">🇲🇽 ${selMex}</span>`;
+  html+=`</div>`;
+  el.innerHTML=html;
+}
+
+function castVote(){
+  if(isClosed()) return;
+  const name=document.getElementById('inp-name').value.trim();
+  const err=document.getElementById('vote-err');
+  err.textContent='';
+  if(!name){err.textContent='이름을 입력해주세요';return;}
+  if(selKor===null){err.textContent='대한민국 득점을 선택해주세요';return;}
+  if(selMex===null){err.textContent='멕시코 득점을 선택해주세요';return;}
+
+  /* 중복 확인 */
+  const existing = Object.entries(votes).find(([,v])=>v.name===name);
+  if(existing){
+    if(!confirm(`'${name}'님은 이미 ${existing[1].kor}:${existing[1].mex}으로 투표하셨습니다. 변경하시겠습니까?`)) return;
+    votesRef.child(existing[0]).remove();
+  }
+
+  votesRef.push({name, kor:selKor, mex:selMex, at:Date.now()});
+  selKor=null; selMex=null;
+}
+
+/* ── 관리자 ── */
+function renderAdmin(){
+  const el=document.getElementById('page-admin');
+  if(!adminUnlocked){
+    el.innerHTML=`<div class="pw-wrap">
+      <div style="font-size:16px;font-weight:700;margin-bottom:12px"><i class="ti ti-lock"></i> 관리자 확인</div>
+      <div style="font-size:13px;color:#888;margin-bottom:14px">비밀번호를 입력하세요</div>
+      <input type="password" placeholder="••••" maxlength="20" id="pw-inp" onkeydown="if(event.key==='Enter')checkPw()">
+      <button class="pw-btn" onclick="checkPw()">확인</button>
+      <div id="pw-err" class="pw-err"></div>
+      <div style="margin-top:14px"><button class="nav-btn" onclick="showPage('vote')">← 돌아가기</button></div>
+    </div>`;
+    return;
+  }
+  renderAdminContent();
+}
+function checkPw(){
+  const v=document.getElementById('pw-inp').value;
+  if(v===ADMIN_PW){adminUnlocked=true;renderAdminContent();}
+  else{document.getElementById('pw-err').textContent='비밀번호가 틀렸습니다';}
+}
+function renderAdminContent(){
+  const el=document.getElementById('page-admin');
+  const total=Object.keys(votes).length;
+  const combos=buildComboMap();
+  const voteList=Object.values(votes).sort((a,b)=>b.at-a.at);
+
+  let html=`
+  <div class="match-header">
+    <div class="match-title">관리자 패널 — 스코어 맞추기</div>
+    <div class="match-teams"><span class="flag">🇰🇷</span><span>대한민국</span><span class="vs">VS</span><span>멕시코</span><span class="flag">🇲🇽</span></div>
+    <div style="margin-top:8px">
+      <span class="deadline-badge ${isClosed()?'deadline-closed':'deadline-open'}">
+        ${isClosed()?'⏰ 마감됨':'✅ 진행중'} · ${deadlineText()}
+      </span>
+    </div>
+  </div>
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-num">${total}</div><div class="summary-lbl">총 참여자</div></div>
+    <div class="summary-card"><div class="summary-num">${combos.length}</div><div class="summary-lbl">고유 스코어 조합</div></div>
+  </div>
+  <div class="tab-row">
+    <div class="tab${adminTab==='list'?' active':''}" onclick="switchAdminTab('list')">스코어별 현황</div>
+    <div class="tab${adminTab==='all'?' active':''}" onclick="switchAdminTab('all')">전체 참여자</div>
+  </div>`;
+
+  if(adminTab==='list'){
+    html+=`<div class="card">`;
+    if(!combos.length){html+=`<div style="color:#aaa;font-size:13px;text-align:center;padding:1.5rem">아직 투표가 없습니다</div>`;}
+    else{
+      html+=`<table class="admin-table"><thead><tr><th>예측 스코어</th><th>인원</th><th>투표율</th><th>참여자</th></tr></thead><tbody>`;
+      combos.forEach(c=>{
+        const pct=Math.round(c.count/total*100);
+        html+=`<tr>
+          <td><span class="badge-kor" style="font-size:12px">🇰🇷 ${c.kor}</span> : <span class="badge-mex" style="font-size:12px">🇲🇽 ${c.mex}</span></td>
+          <td>${c.count}명</td><td>${pct}%</td>
+          <td>${c.names.map(n=>`<span class="voter-chip">${escHtml(n)}</span>`).join(' ')}</td>
+        </tr>`;
+      });
+      html+=`</tbody></table>`;
+    }
+    html+=`</div>`;
+  } else {
+    html+=`<div class="card">`;
+    if(!voteList.length){html+=`<div style="color:#aaa;font-size:13px;text-align:center;padding:1.5rem">아직 투표가 없습니다</div>`;}
+    else{
+      html+=`<table class="admin-table"><thead><tr><th>이름</th><th>예측 스코어</th><th>제출 시각</th></tr></thead><tbody>`;
+      voteList.forEach(v=>{
+        const t=v.at?new Date(v.at).toLocaleTimeString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'-';
+        html+=`<tr>
+          <td style="font-weight:600">${escHtml(v.name)}</td>
+          <td><span class="badge-kor" style="font-size:12px">🇰🇷 ${v.kor}</span> : <span class="badge-mex" style="font-size:12px">🇲🇽 ${v.mex}</span></td>
+          <td style="color:#aaa;font-size:12px">${t}</td>
+        </tr>`;
+      });
+      html+=`</tbody></table>`;
+    }
+    html+=`</div>`;
+  }
+
+  html+=`<div class="admin-actions">
+    <button class="nav-btn" onclick="showPage('vote')">← 투표 화면으로</button>
+    <button class="reset-btn" onclick="resetAll()"><i class="ti ti-refresh"></i> 전체 초기화</button>
+    <button class="nav-btn" onclick="adminUnlocked=false;renderAdmin()"><i class="ti ti-lock"></i> 잠금</button>
+  </div>`;
+
+  el.innerHTML=html;
+}
+
+function switchAdminTab(t){adminTab=t;renderAdminContent();}
+function resetAll(){
+  if(!confirm('모든 투표 데이터를 초기화하시겠습니까?')) return;
+  votesRef.remove();
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* 시작 */
+startListen();
+
+/* 마감 시간 자동 체크 (1분마다) */
+setInterval(()=>{
+  if(document.getElementById('page-vote').classList.contains('active')) renderVote();
+}, 60000);
+</script>
+</body>
+</html>
