@@ -47,7 +47,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .bar-fill{height:8px;border-radius:20px;background:linear-gradient(90deg,#C60C30 0%,#006847 100%);transition:width 0.5s ease}
 .combo-names{display:flex;flex-wrap:wrap;gap:4px}
 .voter-chip{background:#f5f3ee;border:1px solid #e8e6df;border-radius:20px;padding:2px 9px;font-size:11px;color:#666}
-.rank1{background:#FFF3CD;border:1px solid #ffd966;border-radius:6px;padding:2px 8px;font-size:11px;color:#7a5c00;font-weight:600}
+.hot-zone{background:#C60C30;border:1px solid #a00a28;border-radius:6px;padding:2px 8px;font-size:11px;color:#fff;font-weight:700;box-shadow:0 2px 6px rgba(198,12,48,0.4)}
 .empty-preview{font-size:13px;color:#aaa;text-align:center;padding:2rem 0}
 .nav-area{display:flex;justify-content:flex-end;margin-top:12px}
 .nav-btn{padding:8px 16px;border:1px solid #ddd;border-radius:10px;font-size:13px;cursor:pointer;background:#fff;color:#555;font-family:inherit}
@@ -205,16 +205,17 @@ function renderVote(){
   if(!combos.length){
     html += `<div class="empty-preview">아직 투표한 사람이 없습니다</div>`;
   } else {
+    const maxCount = Math.max(...combos.map(c=>c.count));
     combos.forEach(c=>{
       const pct = Math.round(c.count/total*100);
-      const isTop = c.count===combos[0].count;
+      const isHot = c.count === maxCount;
       html += `<div class="combo-row">
         <div class="combo-header">
           <div class="combo-score">
             <span class="badge-kor">🇰🇷 ${c.kor}</span>
             <span style="color:#bbb;font-size:14px">:</span>
             <span class="badge-mex">🇲🇽 ${c.mex}</span>
-            ${isTop?`<span class="rank1">🏆 1위</span>`:''}
+            ${isHot?`<span class="hot-zone">🔥 HOT ZONE</span>`:''}
           </div>
           <span class="combo-pct">${pct}% · ${c.count}명</span>
         </div>
