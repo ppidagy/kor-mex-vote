@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚽ 대한민국 vs 멕시코 스코어 맞추기!</title>
-<meta property="og:title" content="⚽ 대한민국 vs 멕시코 스코어 맞추기!">
+<title>⚽ 대한민국 vs 남아프리카공화국 스코어 맞추기!</title>
+<meta property="og:title" content="⚽ 대한민국 vs 남아프리카공화국 스코어 맞추기!">
 <meta property="og:description" content="🇰🇷 우리팀 득점을 예측해보세요! 과연 누가 맞출까요?">
 <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/320px-Flag_of_South_Korea.svg.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
@@ -90,7 +90,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 /* =====================================================
    ★ 설정값 — 마감시간 변경 시 DEADLINE만 수정하세요
    ===================================================== */
-const DEADLINE = new Date('2026-06-19T09:50:00'); // 6월 19일 목요일 오전 9시 50분
+const DEADLINE = new Date('2026-06-25T09:50:00'); // 6월 25일 목요일 오전 9시 50분 (남아공전 10시 킥오프 10분 전)
 const ADMIN_PW = '20260619';
 
 /* Firebase 설정 */
@@ -167,7 +167,7 @@ function renderVote(){
     <div class="match-teams">
       <span class="flag">🇰🇷</span><span>대한민국</span>
       <span class="vs">VS</span>
-      <span>멕시코</span><span class="flag">🇲🇽</span>
+      <span>남아프리카공화국</span><span class="flag">🇿🇦</span>
     </div>
     <div>
       <span class="deadline-badge ${closed?'deadline-closed':'deadline-open'}">
@@ -188,7 +188,7 @@ function renderVote(){
       <input class="name-input" id="inp-name" placeholder="홍길동" maxlength="10">
       <div class="section-label" style="margin-top:14px">🇰🇷 대한민국 득점</div>
       <div class="score-grid">${makeScoreBtns('kor')}</div>
-      <div class="section-label" style="margin-top:14px">🇲🇽 멕시코 득점</div>
+      <div class="section-label" style="margin-top:14px">🇿🇦 남아프리카공화국 득점</div>
       <div class="score-grid">${makeScoreBtns('mex')}</div>
       <div id="sel-display" style="margin-top:14px"></div>
       <div id="vote-err" class="err"></div>
@@ -214,7 +214,7 @@ function renderVote(){
           <div class="combo-score">
             <span class="badge-kor">🇰🇷 ${c.kor}</span>
             <span style="color:#bbb;font-size:14px">:</span>
-            <span class="badge-mex">🇲🇽 ${c.mex}</span>
+            <span class="badge-mex">🇿🇦 ${c.mex}</span>
             ${isHot?`<span class="hot-zone">🔥 HOT ZONE</span>`:''}
           </div>
           <span class="combo-pct">${pct}% · ${c.count}명</span>
@@ -265,7 +265,7 @@ function updateSelDisplay(){
   let html=`<div class="sel-display">내 예측: `;
   if(selKor!==null) html+=`<span class="badge-kor">🇰🇷 ${selKor}</span>`;
   if(selKor!==null&&selMex!==null) html+=`<span style="color:#bbb;font-size:16px">:</span>`;
-  if(selMex!==null) html+=`<span class="badge-mex">🇲🇽 ${selMex}</span>`;
+  if(selMex!==null) html+=`<span class="badge-mex">🇿🇦 ${selMex}</span>`;
   html+=`</div>`;
   el.innerHTML=html;
 }
@@ -277,7 +277,7 @@ function castVote(){
   err.textContent='';
   if(!name){err.textContent='이름을 입력해주세요';return;}
   if(selKor===null){err.textContent='대한민국 득점을 선택해주세요';return;}
-  if(selMex===null){err.textContent='멕시코 득점을 선택해주세요';return;}
+  if(selMex===null){err.textContent='남아프리카공화국 득점을 선택해주세요';return;}
 
   /* 중복 확인 */
   const existing = Object.entries(votes).find(([,v])=>v.name===name);
@@ -320,7 +320,7 @@ function renderAdminContent(){
   let html=`
   <div class="match-header">
     <div class="match-title">관리자 패널 — 스코어 맞추기</div>
-    <div class="match-teams"><span class="flag">🇰🇷</span><span>대한민국</span><span class="vs">VS</span><span>멕시코</span><span class="flag">🇲🇽</span></div>
+    <div class="match-teams"><span class="flag">🇰🇷</span><span>대한민국</span><span class="vs">VS</span><span>남아프리카공화국</span><span class="flag">🇿🇦</span></div>
     <div style="margin-top:8px">
       <span class="deadline-badge ${isClosed()?'deadline-closed':'deadline-open'}">
         ${isClosed()?'⏰ 마감됨':'✅ 진행중'} · ${deadlineText()}
@@ -344,7 +344,7 @@ function renderAdminContent(){
       combos.forEach(c=>{
         const pct=Math.round(c.count/total*100);
         html+=`<tr>
-          <td><span class="badge-kor" style="font-size:12px">🇰🇷 ${c.kor}</span> : <span class="badge-mex" style="font-size:12px">🇲🇽 ${c.mex}</span></td>
+          <td><span class="badge-kor" style="font-size:12px">🇰🇷 ${c.kor}</span> : <span class="badge-mex" style="font-size:12px">🇿🇦 ${c.mex}</span></td>
           <td>${c.count}명</td><td>${pct}%</td>
           <td>${c.names.map(n=>`<span class="voter-chip">${escHtml(n)}</span>`).join(' ')}</td>
         </tr>`;
@@ -361,7 +361,7 @@ function renderAdminContent(){
         const t=v.at?new Date(v.at).toLocaleTimeString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'-';
         html+=`<tr>
           <td style="font-weight:600">${escHtml(v.name)}</td>
-          <td><span class="badge-kor" style="font-size:12px">🇰🇷 ${v.kor}</span> : <span class="badge-mex" style="font-size:12px">🇲🇽 ${v.mex}</span></td>
+          <td><span class="badge-kor" style="font-size:12px">🇰🇷 ${v.kor}</span> : <span class="badge-mex" style="font-size:12px">🇿🇦 ${v.mex}</span></td>
           <td style="color:#aaa;font-size:12px">${t}</td>
           <td><button onclick="deleteVote('${key}','${escHtml(v.name)}')" style="padding:4px 10px;background:#fff0f0;border:1px solid #f5c1c1;border-radius:8px;font-size:12px;cursor:pointer;color:#a32d2d;font-family:inherit">삭제</button></td>
         </tr>`;
