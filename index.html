@@ -91,7 +91,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
    ★ 설정값 — 마감시간 변경 시 DEADLINE만 수정하세요
    ===================================================== */
 const DEADLINE = new Date('2026-06-25T09:50:00'); // 6월 25일 목요일 오전 9시 50분 (남아공전 10시 킥오프 10분 전)
-const ADMIN_PW = '20260619';
+const ADMIN_PW = '20260625';
 
 /* Firebase 설정 */
 const firebaseConfig = {
@@ -192,7 +192,7 @@ function renderVote(){
       <div class="score-grid">${makeScoreBtns('mex')}</div>
       <div id="sel-display" style="margin-top:14px"></div>
       <div id="vote-err" class="err"></div>
-      <button class="submit-btn" onclick="castVote()">✅ 스코어 제출</button>
+      <button class="submit-btn" id="submit-btn" onclick="castVote()">✅ 스코어 제출</button>
       <div class="nav-area">
         <button class="nav-btn" onclick="showPage('admin')"><i class="ti ti-lock"></i> 관리자</button>
       </div>
@@ -272,7 +272,9 @@ function updateSelDisplay(){
 
 function castVote(){
   if(isClosed()) return;
-  const name=document.getElementById('inp-name').value.trim();
+  const submitBtn=document.getElementById('submit-btn');
+  if(submitBtn.disabled) return;
+  const name=document.getElementById('inp-name').value.trim().replace(/\s+/g,' ');
   const err=document.getElementById('vote-err');
   err.textContent='';
   if(!name){err.textContent='이름을 입력해주세요';return;}
@@ -283,11 +285,27 @@ function castVote(){
   const existing = Object.entries(votes).find(([,v])=>v.name===name);
   if(existing){
     if(!confirm(`'${name}'님은 이미 ${existing[1].kor}:${existing[1].mex}으로 투표하셨습니다. 변경하시겠습니까?`)) return;
-    votesRef.child(existing[0]).remove();
   }
 
-  votesRef.push({name, kor:selKor, mex:selMex, at:Date.now()});
-  selKor=null; selMex=null;
+  submitBtn.disabled=true;
+  submitBtn.textContent='제출 중...';
+
+  const finish=(ok,msg)=>{
+    submitBtn.disabled=false;
+    submitBtn.textContent='✅ 스코어 제출';
+    err.textContent = ok ? '' : msg;
+  };
+
+  const save = existing
+    ? votesRef.child(existing[0]).update({name, kor:selKor, mex:selMex, at:Date.now()})
+    : votesRef.push({name, kor:selKor, mex:selMex, at:Date.now()});
+
+  save.then(()=>{
+    selKor=null; selMex=null;
+    finish(true);
+  }).catch(()=>{
+    finish(false,'제출에 실패했습니다. 다시 시도해주세요');
+  });
 }
 
 /* ── 관리자 ── */
@@ -383,10 +401,12 @@ function renderAdminContent(){
 function switchAdminTab(t){adminTab=t;renderAdminContent();}
 function deleteVote(key,name){
   if(!confirm(`'${name}'님의 투표를 삭제하시겠습니까?`)) return;
+  if(prompt('관리자 비밀번호를 다시 입력하세요')!==ADMIN_PW){alert('비밀번호가 일치하지 않아 취소되었습니다');return;}
   votesRef.child(key).remove();
 }
 function resetAll(){
   if(!confirm('모든 투표 데이터를 초기화하시겠습니까?')) return;
+  if(prompt('정말로 전체 초기화하려면 관리자 비밀번호를 다시 입력하세요')!==ADMIN_PW){alert('비밀번호가 일치하지 않아 취소되었습니다');return;}
   votesRef.remove();
 }
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
